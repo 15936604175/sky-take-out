@@ -92,7 +92,20 @@ public class EmployeeServiceImpl implements EmployeeService {
         //Page有getTotal和getResult方法
         long total = page.getTotal();
         List<Employee> result = page.getResult();
-        return new PageResult(total,result);
+        return new PageResult(total, result);
+    }
+
+    //员工属性的更新
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        //可以将所有的更新列表的功能用一个函数实现
+        Employee employee = Employee.builder()
+                .status(status)
+                .id(id)
+                .updateTime(LocalDateTime.now())
+                .build();
+//        employeeMapper.startOrStop(status, id);
+        employeeMapper.update(employee);
     }
 
 }

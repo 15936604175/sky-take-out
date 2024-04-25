@@ -4,6 +4,7 @@ import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.result.PageResult;
+import io.swagger.models.auth.In;
 
 public interface EmployeeService {
 
@@ -18,4 +19,6 @@ public interface EmployeeService {
 
     //员工分页查询
     PageResult pageSelect(EmployeePageQueryDTO employeePageQueryDTO);
+
+    void startOrStop(Integer status, Long id);
 }
