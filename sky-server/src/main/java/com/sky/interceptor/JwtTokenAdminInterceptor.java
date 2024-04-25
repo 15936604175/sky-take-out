@@ -3,6 +3,7 @@ package com.sky.interceptor;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.properties.JwtProperties;
 import com.sky.utils.JwtUtil;
+import com.sky.utils.ThreadLocalUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,8 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         try {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
+            //将claims保存到线程中
+            ThreadLocalUtil.set(claims);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
             log.info("当前员工id：", empId);
             //3、通过，放行

@@ -1,23 +1,35 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.sky.constant.JwtClaimsConstant;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
+import com.sky.utils.ThreadLocalUtil;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeMapper employeeMapper;
+
 
     /**
      * 员工登录
@@ -52,6 +64,35 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         //3、返回实体对象
         return employee;
+    }
+
+    //新增员工
+    @Override
+    public void add(Employee employee) {
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
+        //获取当前用户信息
+        Claims claims = ThreadLocalUtil.get();
+        //获取当前用户的id 数据库中id的类型为bigint
+        Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
+        employee.setCreateUser(empId);
+        employee.setUpdateUser(empId);
+        employeeMapper.add(employee);
+    }
+
+    //员工分页查询
+    @Override
+    public PageResult pageSelect(EmployeePageQueryDTO employeePageQueryDTO) {
+        // TODO 需要判断是否employeePageQueryDTO.name是否为空吗
+        //开启分页查询
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        // 调用mapper
+        Page<Employee> page = employeeMapper.pageSelect(employeePageQueryDTO);
+        //Page有getTotal和getResult方法
+        long total = page.getTotal();
+        List<Employee> result = page.getResult();
+        return new PageResult(total,result);
     }
 
 }
