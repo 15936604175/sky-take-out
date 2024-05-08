@@ -6,3 +6,12 @@ sky:
     database: sky_take_out
     username: root
     password: 888000
+  alioss:
+    endpoint: oss-cn-beijing.aliyuncs.com
+    access-key-id: LTAI5tM527cVjhee7upQnX9g
+    access-key-secret: fs9CUQI5kfbJKpvWFGOfa5qkEiPzvi
+    bucket-name: big-evnet-cheng
+  redis:
+    port: 6379
+    host: localhost
+    database: 1

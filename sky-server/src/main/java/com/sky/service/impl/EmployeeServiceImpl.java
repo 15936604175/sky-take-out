@@ -6,6 +6,7 @@ import com.sky.constant.JwtClaimsConstant;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
@@ -17,12 +18,14 @@ import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import com.sky.utils.ThreadLocalUtil;
 import io.jsonwebtoken.Claims;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -105,6 +108,26 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .updateTime(LocalDateTime.now())
                 .build();
 //        employeeMapper.startOrStop(status, id);
+        employeeMapper.update(employee);
+    }
+
+    @Override
+    public Employee getEmployeeById(Long id) {
+        Employee employee = employeeMapper.getEmployeeById(id);
+        return employee;
+    }
+
+    //修改员工信息
+    @Override
+    public void updateEmployeeMessage(EmployeeDTO employeeDTO) {
+        Claims claims = ThreadLocalUtil.get();
+        Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
+//        Employee employee = Employee.builder()
+//                .updateTime(LocalDateTime.now())
+//                .updateUser(empId)
+//                .build();
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
         employeeMapper.update(employee);
     }
 
